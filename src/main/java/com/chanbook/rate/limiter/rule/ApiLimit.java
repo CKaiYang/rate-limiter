@@ -1,8 +1,7 @@
 package com.chanbook.rate.limiter.rule;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
@@ -11,7 +10,7 @@ import lombok.NoArgsConstructor;
  * @author chanbook
  * @date 2021/2/25 10:33 下午
  */
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApiLimit {
@@ -29,6 +28,5 @@ public class ApiLimit {
      * 时间范围
      * 单位：ms 毫秒
      */
-    @Builder.Default
     protected Long unit = DEFAULT_TIME_UNIT;
 }

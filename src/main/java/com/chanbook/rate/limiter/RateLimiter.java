@@ -19,11 +19,11 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2021/2/25 10:33 下午
  */
 @Slf4j
-public class ReteLimiter {
+public class RateLimiter {
     private Map<String, RateLimiterAlg> counters = new ConcurrentHashMap<>();
     private RateLimitRule rule;
 
-    public ReteLimiter() {
+    public RateLimiter() {
         InputStream in = null;
         RuleConfig ruleConfig = null;
         try {
@@ -54,7 +54,7 @@ public class ReteLimiter {
         RateLimiterAlg rateLimiterAlg = counters.get(counterKey);
         if (rateLimiterAlg == null) {
             RateLimiterAlg newRateLimiterAlg = new RateLimiterAlg();
-            rateLimiterAlg = counters.putIfAbsent(counterKey,newRateLimiterAlg);
+            rateLimiterAlg = counters.putIfAbsent(counterKey, newRateLimiterAlg);
             if (rateLimiterAlg == null) {
                 rateLimiterAlg = newRateLimiterAlg;
             }
