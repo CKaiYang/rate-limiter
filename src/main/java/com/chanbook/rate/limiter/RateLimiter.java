@@ -45,6 +45,11 @@ public class RateLimiter {
         this.rule = new RateLimitRule(ruleConfig);
     }
 
+    /**
+     * @param appId
+     * @param url
+     * @return true 可通过 false 不可通过
+     */
     public boolean limit(String appId, String url) {
         ApiLimit apiLimit = rule.getLimit(appId, url);
         if (apiLimit == null) {

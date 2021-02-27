@@ -87,6 +87,9 @@ public class RateLimitRule {
             TrieNode curr = this.root;
             String[] split = api.split(SPLIT);
             for (String key : split) {
+                if (StringUtils.isEmpty(key)) {
+                    continue;
+                }
                 if (curr == null) {
                     return null;
                 }
