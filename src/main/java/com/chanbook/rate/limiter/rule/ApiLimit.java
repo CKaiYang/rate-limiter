@@ -15,6 +15,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ApiLimit {
     private static final Long DEFAULT_TIME_UNIT = 1L;
+    private static final Long DEFAULT_LIMIT = 1L;
 
     /**
      * 限流接口
@@ -23,7 +24,7 @@ public class ApiLimit {
     /**
      * 限制次数
      */
-    protected Long limit;
+    protected Long limit = DEFAULT_LIMIT;
     /**
      * 时间范围
      * 单位：ms 毫秒

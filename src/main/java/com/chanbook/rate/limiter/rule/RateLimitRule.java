@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RateLimitRule {
     private final static String SPLIT = "/";
-    private Map<String, Trie> appIdTrie = new ConcurrentHashMap<>();
+    private final Map<String, Trie> appIdTrie = new ConcurrentHashMap<>();
 
     public RateLimitRule(RuleConfig ruleConfig) {
         List<RuleConfig.AppRuleConfig> configs = ruleConfig.getConfigs();
@@ -53,7 +53,7 @@ public class RateLimitRule {
     }
 
     private static class Trie {
-        private TrieNode root;
+        private final TrieNode root;
 
         public Trie() {
             this.root = new TrieNode("root");
@@ -99,8 +99,8 @@ public class RateLimitRule {
     private static class TrieNode {
         private final static int DEFAULT_INIT_CAP = 16;
         @Getter
-        private String key;
-        private Map<String, TrieNode> nextNodes = new ConcurrentHashMap<>(DEFAULT_INIT_CAP);
+        private final String key;
+        private final Map<String, TrieNode> nextNodes = new ConcurrentHashMap<>(DEFAULT_INIT_CAP);
         @Setter
         @Getter
         private ApiLimit limit;

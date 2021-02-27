@@ -20,8 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class RateLimiter {
-    private Map<String, RateLimiterAlg> counters = new ConcurrentHashMap<>();
-    private RateLimitRule rule;
+    private final Map<String, RateLimiterAlg> counters = new ConcurrentHashMap<>();
+    private final RateLimitRule rule;
 
     public RateLimiter() {
         InputStream in = null;
@@ -41,6 +41,7 @@ public class RateLimiter {
                 }
             }
         }
+        assert ruleConfig != null;
         this.rule = new RateLimitRule(ruleConfig);
     }
 
@@ -50,15 +51,11 @@ public class RateLimiter {
             return true;
         }
 
-        String counterKey = String.format("%s:%s", appId, apiLimit.getApi());
-        RateLimiterAlg rateLimiterAlg = counters.get(counterKey);
-        if (rateLimiterAlg == null) {
-            RateLimiterAlg newRateLimiterAlg = new RateLimiterAlg();
-            rateLimiterAlg = counters.putIfAbsent(counterKey, newRateLimiterAlg);
-            if (rateLimiterAlg == null) {
-                rateLimiterAlg = newRateLimiterAlg;
-            }
-        }
-        return rateLimiterAlg.tryAcquire();
+        String counterKey = getKey(appId, apiLimit.getApi());
+        return counters.computeIfAbsent(counterKey, key -> new RateLimiterAlg(apiLimit)).tryAcquire();
+    }
+
+    private String getKey(String appId, String api) {
+        return String.format("%s:%s", appId, api);
     }
 }
