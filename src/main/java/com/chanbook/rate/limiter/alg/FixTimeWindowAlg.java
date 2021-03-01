@@ -10,12 +10,12 @@ import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * RateLimiterAlg
- *
+ * 固定时间窗口限流
  * @author chanbook
  * @date 2021/2/25 11:55 下午
  */
 @Slf4j
-public class RateLimiterAlg {
+public class FixTimeWindowAlg implements RateLimitAlg {
     private final static int INITIAL = 0;
     private final static int LOCK_TIME = 20;
     private final ApiLimit apiLimit;
@@ -23,7 +23,7 @@ public class RateLimiterAlg {
     private final StopWatch stopWatch = new StopWatch();
     private final Lock lock = new ReentrantLock();
 
-    public RateLimiterAlg(ApiLimit apiLimit) {
+    public FixTimeWindowAlg(ApiLimit apiLimit) {
         this.apiLimit = apiLimit;
     }
 
@@ -34,6 +34,7 @@ public class RateLimiterAlg {
      *
      * @return true 可以访问 false 不能访问
      */
+    @Override
     public boolean tryAcquire() {
         try {
             lock.tryLock(LOCK_TIME, TimeUnit.MILLISECONDS);
@@ -69,5 +70,4 @@ public class RateLimiterAlg {
             return currTime - lastTime;
         }
     }
-
 }

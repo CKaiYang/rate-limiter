@@ -3,6 +3,6 @@ configs:
     limits:
       - api: /v1/user/info
         limit: 1000
-        unit: 10
+        unit: 1000
       - api: /v1/user/age
         limit: 10

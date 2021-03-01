@@ -1,14 +1,15 @@
 package com.chanbook.rate.limiter;
 
-import com.chanbook.rate.limiter.alg.RateLimiterAlg;
+import com.chanbook.rate.limiter.alg.FixTimeWindowAlg;
+import com.chanbook.rate.limiter.alg.RateLimitAlg;
+import com.chanbook.rate.limiter.datasource.FileRuleConfigSource;
+import com.chanbook.rate.limiter.datasource.RuleConfigSource;
 import com.chanbook.rate.limiter.rule.ApiLimit;
 import com.chanbook.rate.limiter.rule.RateLimitRule;
 import com.chanbook.rate.limiter.rule.RuleConfig;
+import com.chanbook.rate.limiter.rule.TrieRateLimitRule;
 import lombok.extern.slf4j.Slf4j;
-import org.yaml.snakeyaml.Yaml;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -20,29 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public class RateLimiter {
-    private final Map<String, RateLimiterAlg> counters = new ConcurrentHashMap<>();
+    private final Map<String, RateLimitAlg> counters = new ConcurrentHashMap<>();
     private final RateLimitRule rule;
 
     public RateLimiter() {
-        InputStream in = null;
-        RuleConfig ruleConfig = null;
-        try {
-            in = this.getClass().getResourceAsStream("/rate-limiter.yaml");
-            if (in != null) {
-                Yaml yaml = new Yaml();
-                ruleConfig = yaml.loadAs(in, RuleConfig.class);
-            }
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        RuleConfigSource ruleConfigSource = new FileRuleConfigSource();
+        RuleConfig ruleConfig = ruleConfigSource.load();
         assert ruleConfig != null;
-        this.rule = new RateLimitRule(ruleConfig);
+        this.rule = new TrieRateLimitRule(ruleConfig);
     }
 
     /**
@@ -57,7 +43,7 @@ public class RateLimiter {
         }
 
         String counterKey = getKey(appId, apiLimit.getApi());
-        return counters.computeIfAbsent(counterKey, key -> new RateLimiterAlg(apiLimit)).tryAcquire();
+        return counters.computeIfAbsent(counterKey, key -> new FixTimeWindowAlg(apiLimit)).tryAcquire();
     }
 
     private String getKey(String appId, String api) {
