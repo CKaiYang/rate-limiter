@@ -36,7 +36,7 @@ public class FileRuleConfigSource implements RuleConfigSource {
             try {
                 in = this.getClass().getResourceAsStream("/" + getFileNameByExt(API_LIMIT_CONFIG_NAME, extension));
                 if (in != null) {
-                    RuleConfigParser parser = new YamlRuleConfigParser();
+                    RuleConfigParser parser = PARSER_MAP.get(extension);
                     return parser.parse(in);
                 }
             } finally {
